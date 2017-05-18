@@ -1,0 +1,21 @@
+
+<h1>Listing stories</h1>
+
+<%= link_to 'New story', new_story_path %>
+<table class="table ">
+  <tr>
+    <th>Story ID</th>
+    <th>Summary</th>
+    <th>Status</th>
+    <th>Action</th>
+  </tr>
+
+  <% @stories.each do |story| %>
+      <tr>
+        <td><%= story.id %></td>
+        <td><%= story.summary %></td>
+        <td><%= story.status %></td>
+        <td><%= link_to 'Show', story_path(story) %></td>
+      </tr>
+  <% end %>
+</table>

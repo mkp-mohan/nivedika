@@ -1,0 +1,364 @@
+<body id="page-top-sprint" data-spy="scroll" data-target=".navbar-fixed-top">
+
+<!-- Navigation -->
+<nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
+        Menu <i class="fa fa-bars"></i>
+      </button>
+      <a class="navbar-brand page-scroll" href="#page-top-sprint">
+        <i class="fa fa-play-circle"></i> <span class="light">Welcome</span> Guest
+      </a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
+      <ul class="nav navbar-nav">
+        <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
+        <li class="hidden">
+          <a class="page-scroll" href="#page-top-sprint"></a>
+
+        </li>
+        <li>
+          <!--a class="page-scroll" href="#about">About</a-->
+          <%= link_to "Home", welcome_index_path ,class: "page-scroll"  %>
+        </li>
+        <li>
+          <!--a class="page-scroll" href="#report">Report</a-->
+          <%= link_to "Report", welcome_index_path(:anchor => "report") ,class: "page-scroll"  %>
+        </li>
+        <li>
+          <%= link_to 'Stories', controller: 'stories' %>
+        </li>
+      </ul>
+    </div>
+    <!-- /.navbar-collapse -->
+  </div>
+  <!-- /.container -->
+</nav>
+
+<section class ="download-section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+          <h1 ><%=@this_project%> Dashboard</h1>
+        </div>
+      </div>
+    </div>
+</section>
+
+
+<div class="background-white">
+  <!-- Main content -->
+  <section class="content">
+    <div class="row">
+      <div class="col-md-4">
+        <!-- AREA CHART -->
+        <div class="box box-solid box-info">
+          <div class="box-header with-border">
+            <h3 class="box-title">Issues by Status Donut Chart</h3>
+          </div>
+          <div class="box-body">
+            <div class="chart">
+              <canvas id="orders_chart" style="height:250px"></canvas>
+            </div>
+          </div>
+          <!-- /.box-body -->
+        </div>
+        <!-- /.box -->
+
+        <!-- DONUT CHART -->
+        <div class="box box-solid box-info">
+          <div class="box-header with-border">
+            <h3 class="box-title">Issues by Type Pie Chart</h3>
+            <div class="box-tools pull-right">
+              <a  class="btn btn-box-tool" download="issues_by_type" id="savegraph"><i class="fa fa-download"></i>
+              </a>
+            </div>
+          </div>
+          <div class="box-body">
+            <canvas id="orders_chart2" style="height:250px"></canvas>
+          </div>
+          <!-- /.box-body -->
+        </div>
+        <!-- /.box -->
+
+      </div>
+      <!-- /.col (LEFT) -->
+      <div class="col-md-4">
+        <!-- LINE CHART -->
+        <div class="box box-solid box-info">
+          <div class="box-header with-border">
+            <h3 class="box-title">Issues by Status Bar Chart</h3>
+
+          </div>
+          <div class="box-body">
+            <div class="chart">
+              <canvas id="myChart" style="height:250px"></canvas>
+            </div>
+          </div>
+          <!-- /.box-body -->
+        </div>
+        <!-- /.box -->
+
+        <!-- BAR CHART -->
+        <div class="box box-solid box-info">
+          <div class="box-header with-border">
+            <h3 class="box-title">Issues by Type Bar Chart</h3>
+
+         </div>
+          <div class="box-body">
+            <div class="chart">
+              <canvas id="myChart2" style="height:230px"></canvas>
+            </div>
+          </div>
+          <!-- /.box-body -->
+        </div>
+        <!-- /.box -->
+
+      </div>
+      <!-- /.col (RIGHT) -->
+      <div class="col-md-4">
+        <div class="box box-solid box-primary">
+          <div class="box-header with-border">
+            <h3 class="box-title">Number of issues raised by User</h3>
+
+          </div>
+          <div class="box-body">
+            <div class="chart">
+              <table id = "example2" class="table table-bordered">
+                <thead>
+                <tr>
+
+                  <th>Reporter name</th>
+                  <th>Count</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <% group_by_reporter =group_count(@issues_array_hash,:reporter)%>
+                <% group_by_reporter.each do |name,count| %>
+                    <tr>
+
+                      <td><%= name %></td>
+                      <td><%= count %></td>
+
+                    </tr>
+                <% end %>
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!-- /.box-body -->
+        </div>
+
+      </div>
+    </div>
+    <!-- /.row -->
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="box box-solid box-primary">
+          <div class="box-header with-border">
+            <h3 class="box-title">Issue Summary</h3>
+
+          </div>
+          <div class="box-body">
+
+              <table id = "example1" class="table table-bordered">
+                <thead>
+                <tr>
+
+                  <th>Issue ID</th>
+                  <th>Reporter</th>
+                  <th>Issue type</th>
+                  <th>Status</th>
+                  <th>Created</th>
+                </tr>
+                </thead>
+
+                <tbody>
+
+                <% @issues_array_hash.each do |name| %>
+                    <tr>
+                      <% issue_link = 'https://jira.atlassian.com/browse/'+name[:key] %>
+                      <td><%= link_to name[:key], issue_link, :target => '_blank' %></td>
+                      <!--td><a href=<%= issue_link%> data-target='_blank' ><%= name[:key] %> </a></td-->
+                      <td><%= name[:reporter] %></td>
+                      <td><%= name[:issuetype] %></td>
+                      <td><%= name[:status] %></td>
+                      <td><%= Date.parse( name[:created]).strftime("%d-%m-%Y") %></td>
+
+                    </tr>
+                <% end %>
+
+                </tbody>
+              </table>
+
+          </div>
+          <!-- /.box-body -->
+        </div>
+
+      </div>
+    </div>
+
+  </section>
+  <!-- /.content -->
+</div>
+
+
+
+</body>
+
+<%
+
+group_by_issue_type = group_count(@issues_array_hash,:issuetype)
+
+group_by_status =group_count(@issues_array_hash,:status)
+group_by_assignee =group_count(@issues_array_hash,:assignee)
+  def gen_color(size)
+    colors =[]
+    size.each do
+      color = "%06x" % (rand(0..0xffffff))
+      colors << '#' +color.to_s
+    end
+    colors
+  end
+%>
+
+
+<script>
+    var ctx = document.getElementById("myChart");
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: <%=raw(group_by_status.keys)%>,
+            datasets: [{
+                label: '# of issues',
+                data: <%=group_by_status.values%>,
+                backgroundColor: <%= raw(gen_color(group_by_status.keys))%>,
+                borderWidth: 2
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero:true
+                    }
+                }]
+            },
+            title: {
+                display: true,
+                text: 'Grouped by Status'
+            },
+            legend: {
+                display: true,
+                position: 'right'
+            }
+        }
+    });
+    var ctx4 = document.getElementById("myChart2");
+    var myChart2 = new Chart(ctx4, {
+        type: 'bar',
+        data: {
+            labels: <%=raw(group_by_issue_type.keys)%>,
+            datasets: [{
+                label: '# of issues',
+                data: <%=group_by_issue_type.values%>,
+                backgroundColor: <%= raw(gen_color(group_by_issue_type.keys))%>,
+                borderWidth: 2
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero:true
+                    }
+                }]
+            },
+            title: {
+                display: true,
+                text: 'Grouped by issue type'
+            },
+            legend: {
+                display: true,
+                position: 'right'
+            }
+        }
+    });
+    var ctx2 = document.getElementById("orders_chart");
+    var orders_chart = new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+            labels: <%=raw(group_by_status.keys)%>,
+            datasets: [{
+                data: <%=group_by_status.values%>,
+                backgroundColor: <%= raw(gen_color(group_by_status.keys))%>
+
+            }]
+        },
+        options: {
+            animation:{
+                animateScale:true,
+                circumference: 1
+            },
+            title: {
+                display: true,
+                text: 'Grouped by status'
+            },
+            legend: {
+                display: true,
+                position: 'right'
+            }
+        }
+
+    });
+    var ctx3 = document.getElementById("orders_chart2");
+    var orders_chart2 = new Chart(ctx3, {
+        type: 'pie',
+        data: {
+            labels: <%=raw(group_by_issue_type.keys)%>,
+            datasets: [{
+                data: <%=group_by_issue_type.values%>,
+                backgroundColor: <%= raw(gen_color(group_by_issue_type.keys))%>
+
+            }]
+        },
+        options: {
+            animation:{
+                animateScale:true,
+                circumference: 1,
+                onComplete: function(animation){
+                    document.querySelector('#savegraph').setAttribute('href', this.toBase64Image());
+                }
+            },
+            title: {
+                display: true,
+                text: 'Groped by issue type'
+            },
+            legend: {
+                display: true,
+                position: 'right'
+            }
+
+        }
+
+    });
+    $(function () {
+        $("#example1").DataTable();
+        $('#example2').DataTable({
+            "paging": true,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": true,
+            "info": true,
+            "autoWidth": true,
+            "pagingType": "simple"
+        });
+    });
+
+</script>
+
